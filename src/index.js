@@ -2,8 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path')
 const shortUrl = require('./model/url.model')
-const availableNumber = require('./model/availableNumber.model')
-const pokemon = require('pokemon');
 const port = process.env.PORT || 3001;
 
 require('./db/mongoose')
@@ -36,31 +34,11 @@ app.get('/all-urls', async (req, res) => {
 
 app.post('/shorten-url', async (req, res) => {
     try {
-        let fromUrl, url;
-        if (req.body.title) {
-            fromUrl = req.body.title;
-            url = new shortUrl({
-                toUrl: req.body.url,
-                fromUrl
-            })
-        }
-        else {
-            const number = await availableNumber.findOneAndDelete();
-            if (number) {
-                fromUrl = pokemon.getName(number);
-                url = new shortUrl({
-                    toUrl: req.body.url,
-                    fromUrl
-                })
-            } else {
-                const count = await shortUrl.countDocuments()
-                fromUrl = pokemon.getName(count + 1);
-                url = new shortUrl({
-                    toUrl: req.body.url,
-                    fromUrl
-                })
-            }
-        }
+        let fromUrl = req.body.title;
+        let url = new shortUrl({
+            toUrl: req.body.url,
+            fromUrl
+        })
         await url.save()
         res.status(200).send({ url: '/t/' + fromUrl })
     } catch (error) {
