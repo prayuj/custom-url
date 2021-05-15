@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path')
 const shortUrl = require('./model/url.model')
+const urlSlug = require('url-slug')
 const port = process.env.PORT || 3001;
 
 require('./db/mongoose')
@@ -34,9 +35,10 @@ app.get('/all-urls', async (req, res) => {
 
 app.post('/shorten-url', async (req, res) => {
     try {
-        let fromUrl = req.body.title;
+        let fromUrl = urlSlug(req.body.title);
+        let toUrl = req.body.url
         let url = new shortUrl({
-            toUrl: req.body.url,
+            toUrl,
             fromUrl
         })
         await url.save()
