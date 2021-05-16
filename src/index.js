@@ -39,6 +39,12 @@ app.delete('/url', async (req, res) => {
         const id = req.body.id
         const url = await shortUrl.findByIdAndDelete(id)
         if (!url) return res.status(404).send()
+        if (url.setFromUniqueNames) {
+            const name = new uniqueName({
+                name: url.fromUrl
+            });
+            await name.save()
+        }
         res.status(200).send(url)
     } catch (error) {
         res.status(500).send({ error })
@@ -47,14 +53,29 @@ app.delete('/url', async (req, res) => {
 
 app.post('/shorten-url', async (req, res) => {
     try {
-        let fromUrl = urlSlug(req.body.title);
-        let toUrl = req.body.url
-        let url = new shortUrl({
-            toUrl,
-            fromUrl
-        })
-        await url.save()
-        res.status(200).send({ url: '/t/' + fromUrl })
+        if (req.body.title) {
+            let fromUrl = urlSlug(req.body.title);
+            let toUrl = req.body.url
+            let url = new shortUrl({
+                toUrl,
+                fromUrl,
+                setFromUniqueNames: false
+            })
+            await url.save()
+            res.status(200).send({ url: '/t/' + fromUrl })
+        } else {
+            let fromUrl = await uniqueName.findOneAndDelete();
+            fromUrl = urlSlug(fromUrl.name)
+            let toUrl = req.body.url
+            let url = new shortUrl({
+                toUrl,
+                fromUrl,
+                setFromUniqueNames: true
+            })
+            await url.save()
+            res.status(200).send({ url: '/t/' + fromUrl })
+        }
+
     } catch (error) {
         res.status(500).send({ error })
     }
@@ -65,7 +86,7 @@ app.post('/set-url-name', async (req, res) => {
         const names = req.body.names
         for (let index = 0; index < names.length; index++) {
             const name = new uniqueName({
-                name: names[index]
+                name: urlSlug(names[index])
             });
             await name.save()
         }

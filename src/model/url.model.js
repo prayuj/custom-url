@@ -18,6 +18,10 @@ const urlShortnerSchema = new mongoose.Schema({
         required: true,
         trim: true,
         unique: true
+    },
+    setFromUniqueNames: {
+        type: Boolean,
+        required: true
     }
 })
 
