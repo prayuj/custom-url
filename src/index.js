@@ -12,6 +12,9 @@ const app = express();
 
 app.use(cors());
 app.use(express.json())
+const publicDirectoryPath = path.join(__dirname, '../public')
+
+app.use(express.static(publicDirectoryPath))
 
 app.get('/t/:url', async (req, res) => {
     try {
