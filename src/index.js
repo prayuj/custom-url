@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path')
 const shortUrl = require('./model/url.model')
+const uniqueName = require('./model/uniqueName.model')
 const urlSlug = require('url-slug')
 const port = process.env.PORT || 3001;
 
@@ -55,7 +56,22 @@ app.post('/shorten-url', async (req, res) => {
         await url.save()
         res.status(200).send({ url: '/t/' + fromUrl })
     } catch (error) {
-        res.send({ error })
+        res.status(500).send({ error })
+    }
+})
+
+app.post('/set-url-name', async (req, res) => {
+    try {
+        const names = req.body.names
+        for (let index = 0; index < names.length; index++) {
+            const name = new uniqueName({
+                name: names[index]
+            });
+            await name.save()
+        }
+        res.status(200).send({ success: 'Successfully Set New Unique Names' })
+    } catch (error) {
+        res.status(500).send({ error })
     }
 })
 
