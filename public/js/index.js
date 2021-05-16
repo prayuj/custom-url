@@ -68,7 +68,7 @@ function showTable(urls) {
             <th scope="col">#</th>
             <th scope="col">From</th>
             <th scope="col">To</th>
-            <th scope="col">Delete</th>
+            <th scope="col" colspan="2">Copy/Delete</th>
             </tr>
         </thead>
         <tbody>`
@@ -78,10 +78,16 @@ function showTable(urls) {
         <tr>
             <td>${i + 1}</td>
             <td><input type="text" class="form-control"  id="url-result-${urls[i]._id}" value="${window.location.origin + "/t/" + urls[i].fromUrl}" readonly/></td>
-            <td>${urls[i].toUrl}</td>
             <td>
-            <button id = "copy-${urls[i]._id}" class="btn btn-secondary" onclick="copyToClipboard(this)"><i class="far fa-copy"></i></button>
-            <button id = "delete-${urls[i]._id}" class="btn btn-danger" onclick="deleteUrl(this)"><i class="far fa-trash-alt"></i></button>
+                <a href="${urls[i].toUrl}" target="_blank">
+                    <button class="btn-sm btn-warning">
+                        <i class="fas fa-external-link-alt"></i>
+                    </button>
+                </a>
+            </td>
+            <td>
+                <button id = "copy-${urls[i]._id}" class="btn-sm btn-secondary" onclick="copyToClipboard(this)"><i class="far fa-copy"></i></button>
+                <button id = "delete-${urls[i]._id}" class="btn-sm btn-danger" onclick="deleteUrl(this)"><i class="far fa-trash-alt"></i></button>
             </td>
         </tr>
         `
