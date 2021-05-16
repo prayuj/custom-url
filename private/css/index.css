@@ -1,0 +1,23 @@
+#url-form {
+    margin: .5em;
+}
+
+#url-form>input, #result>* {
+    margin: .5em 0;
+}
+
+.alert {
+    color: red;
+}
+
+.success {
+    color: green;
+}
+
+.display-flex {
+    display: flex;
+}
+
+.title {
+    margin: .5em 0
+}

@@ -1,8 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path')
+var cookieParser = require('cookie-parser')
 const shortUrl = require('./model/url.model')
 const uniqueName = require('./model/uniqueName.model')
+const auth = require('./middleware/auth')
 const urlSlug = require('url-slug')
 const port = process.env.PORT || 3001;
 
@@ -12,9 +14,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json())
-const publicDirectoryPath = path.join(__dirname, '../public')
-
-app.use(express.static(publicDirectoryPath))
+app.use(cookieParser())
 
 app.get('/t/:url', async (req, res) => {
     try {
@@ -24,11 +24,11 @@ app.get('/t/:url', async (req, res) => {
         url.save();
         res.redirect(url.toUrl)
     } catch (err) {
-        res.redirect('/?redirect=false')
+        res.redirect('/dashboard/?redirect=false')
     }
 })
 
-app.get('/all-urls', async (req, res) => {
+app.get('/all-urls', auth, async (req, res) => {
     try {
         const urls = await shortUrl.find();
         res.status(200).send({ urls })
@@ -37,7 +37,7 @@ app.get('/all-urls', async (req, res) => {
     }
 })
 
-app.delete('/url', async (req, res) => {
+app.delete('/url', auth, async (req, res) => {
     try {
         const id = req.body.id
         const url = await shortUrl.findByIdAndDelete(id)
@@ -54,7 +54,7 @@ app.delete('/url', async (req, res) => {
     }
 })
 
-app.post('/shorten-url', async (req, res) => {
+app.post('/shorten-url', auth, async (req, res) => {
     try {
         if (req.body.title) {
             let fromUrl = urlSlug(req.body.title);
@@ -85,7 +85,7 @@ app.post('/shorten-url', async (req, res) => {
     }
 })
 
-app.post('/set-url-name', async (req, res) => {
+app.post('/set-url-name', auth, async (req, res) => {
     try {
         const names = req.body.names
         for (let index = 0; index < names.length; index++) {
@@ -99,6 +99,13 @@ app.post('/set-url-name', async (req, res) => {
         res.status(500).send({ error })
     }
 })
+
+
+const privateDirectoryPath = path.join(__dirname, '../private')
+const publicDirectoryPath = path.join(__dirname, '../public')
+
+app.use('/enter-key', express.static(publicDirectoryPath))
+app.use('/', auth, express.static(privateDirectoryPath))
 
 app.listen(port, () => {
     console.log('Server is running on port ' + port)

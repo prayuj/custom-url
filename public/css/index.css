@@ -1,21 +1,9 @@
-#url-form {
+#key-form {
     margin: .5em;
 }
 
-#url-form>input, #result>* {
+#key-form>input {
     margin: .5em 0;
-}
-
-.alert {
-    color: red;
-}
-
-.success {
-    color: green;
-}
-
-.display-flex {
-    display: flex;
 }
 
 .title {
