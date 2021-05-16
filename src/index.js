@@ -19,6 +19,9 @@ app.use(express.static(publicDirectoryPath))
 app.get('/t/:url', async (req, res) => {
     try {
         const url = await shortUrl.findOne({ fromUrl: req.params.url })
+        if (url.count) url.count += 1
+        else url.count = 1;
+        url.save();
         res.redirect(url.toUrl)
     } catch (err) {
         res.redirect('/?redirect=false')
