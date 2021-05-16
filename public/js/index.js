@@ -1,5 +1,6 @@
 const submit_button = document.getElementById('submit-button')
 getAllUrls()
+let timeout;
 
 document.getElementById('url-form').onsubmit = async function (event) {
     event.preventDefault();
@@ -11,8 +12,8 @@ document.getElementById('url-form').onsubmit = async function (event) {
             if (data.url) {
                 this.reset()
                 const resultUrlHTML = `
-                    <input type="text" class="form-control" id="url-result" value="${window.location.host + data.url}" readonly/>
-                    <button class="btn btn-secondary" onclick="copyToClipboard(this)"><i class="far fa-copy"></i></button>`
+                    <p>${window.location.host + data.url}</p>
+                    <button class="btn btn-secondary" onclick="copyToClipboard('${window.location.host + data.url}')"><i class="far fa-copy"></i></button>`
                 document.getElementById('result').innerHTML = resultUrlHTML
                 getAllUrls()
             } else {
@@ -43,23 +44,17 @@ function deleteUrl(button) {
     }
 }
 
-
-async function copyToClipboard(button) {
-    var copyText;
-    if (button.id && button.id.indexOf('copy-') > -1) {
-        const id = button.id.split('copy-')[1]
-        copyText = document.getElementById("url-result-" + id);
-        copyText.select();
-        copyText.setSelectionRange(0, 99999)
-    } else {
-        copyText = document.getElementById("url-result");
-        copyText.select();
-        copyText.setSelectionRange(0, 99999)
-    }
-    document.execCommand("copy");
-    alert("Copied the text: " + copyText.value);
-
-}
+const copyToClipboard = str => {
+    clearTimeout(timeout)
+    const el = document.createElement('textarea');
+    el.value = str;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    document.getElementById('copy-message').innerHTML = `<p class="success">Copied <b>${str}</b> to clipboard</p>`
+    timeout = setTimeout(() => document.getElementById('copy-message').innerHTML = '', 5000)
+};
 
 function showTable(urls) {
     let table = `
@@ -67,10 +62,10 @@ function showTable(urls) {
         <thead>
             <tr>
             <th scope="col">#</th>
-            <th scope="col">From</th>
+            <th scope="col" colspan="2">Title</th>
             <th scope="col">Count</th>
             <th scope="col">To</th>
-            <th scope="col" colspan="2">Delete</th>
+            <th scope="col">Delete</th>
             </tr>
         </thead>
         <tbody>`
@@ -80,8 +75,10 @@ function showTable(urls) {
         <tr>
             <td>${i + 1}</td>
             <td>
-                <input type="text" class="form-control"  id="url-result-${urls[i]._id}" value="${window.location.host + "/t/" + urls[i].fromUrl}" readonly/>
-                <button id = "copy-${urls[i]._id}" class="btn-sm btn-secondary" onclick="copyToClipboard(this)"><i class="far fa-copy"></i></button>
+                <p>${urls[i].fromUrl}</p>
+            </td>
+            <td>
+                <button id = "copy-${urls[i]._id}" class="btn-sm btn-secondary" onclick="copyToClipboard('${window.location.host + "/t/" + urls[i].fromUrl}')"><i class="far fa-copy"></i></button>
             </td>
             <td>
                 ${urls[i].count || 'No Data'}

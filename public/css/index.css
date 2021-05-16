@@ -10,6 +10,10 @@
     color: red;
 }
 
+.success {
+    color: green;
+}
+
 .display-flex {
     display: flex;
 }
