@@ -24,7 +24,7 @@ app.get('/t/:url', async (req, res) => {
         url.save();
         res.redirect(url.toUrl)
     } catch (err) {
-        res.redirect('/dashboard/?redirect=false')
+        res.redirect('/')
     }
 })
 
