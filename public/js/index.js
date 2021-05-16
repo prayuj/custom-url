@@ -9,13 +9,14 @@ document.getElementById('url-form').onsubmit = async function (event) {
     restClient('/shorten-url', { url, title })
         .then(data => {
             if (data.url) {
+                this.reset()
                 const resultUrlHTML = `
                     <input type="text" class="form-control" id="url-result" value="${window.location.host + data.url}" readonly/>
                     <button class="btn btn-secondary" onclick="copyToClipboard(this)"><i class="far fa-copy"></i></button>`
                 document.getElementById('result').innerHTML = resultUrlHTML
                 getAllUrls()
             } else {
-                document.getElementById('result').innerHTML = `<h2>An Error Occurred</h2>`
+                document.getElementById('result').innerHTML = `<p class="alert">${data.error || 'An Error Occured'}</p>`
             }
             submit_button.disabled = false
         })
@@ -68,7 +69,7 @@ function showTable(urls) {
             <th scope="col">#</th>
             <th scope="col">From</th>
             <th scope="col">To</th>
-            <th scope="col" colspan="2">Copy/Delete</th>
+            <th scope="col" colspan="2">Delete</th>
             </tr>
         </thead>
         <tbody>`
@@ -77,7 +78,10 @@ function showTable(urls) {
         table += `
         <tr>
             <td>${i + 1}</td>
-            <td><input type="text" class="form-control"  id="url-result-${urls[i]._id}" value="${window.location.host + "/t/" + urls[i].fromUrl}" readonly/></td>
+            <td class="display-flex">
+                <input type="text" class="form-control"  id="url-result-${urls[i]._id}" value="${window.location.host + "/t/" + urls[i].fromUrl}" readonly/>
+                <button id = "copy-${urls[i]._id}" class="btn-sm btn-secondary" onclick="copyToClipboard(this)"><i class="far fa-copy"></i></button>
+            </td>
             <td>
                 <a href="${urls[i].toUrl}" target="_blank">
                     <button class="btn-sm btn-warning">
@@ -86,7 +90,6 @@ function showTable(urls) {
                 </a>
             </td>
             <td>
-                <button id = "copy-${urls[i]._id}" class="btn-sm btn-secondary" onclick="copyToClipboard(this)"><i class="far fa-copy"></i></button>
                 <button id = "delete-${urls[i]._id}" class="btn-sm btn-danger" onclick="deleteUrl(this)"><i class="far fa-trash-alt"></i></button>
             </td>
         </tr>
