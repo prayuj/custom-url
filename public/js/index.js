@@ -68,6 +68,7 @@ function showTable(urls) {
             <tr>
             <th scope="col">#</th>
             <th scope="col">From</th>
+            <th scope="col">Count</th>
             <th scope="col">To</th>
             <th scope="col" colspan="2">Delete</th>
             </tr>
@@ -78,9 +79,12 @@ function showTable(urls) {
         table += `
         <tr>
             <td>${i + 1}</td>
-            <td class="display-flex">
+            <td>
                 <input type="text" class="form-control"  id="url-result-${urls[i]._id}" value="${window.location.host + "/t/" + urls[i].fromUrl}" readonly/>
                 <button id = "copy-${urls[i]._id}" class="btn-sm btn-secondary" onclick="copyToClipboard(this)"><i class="far fa-copy"></i></button>
+            </td>
+            <td>
+                ${urls[i].count || 'No Data'}
             </td>
             <td>
                 <a href="${urls[i].toUrl}" target="_blank">
