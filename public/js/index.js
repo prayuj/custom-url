@@ -10,7 +10,7 @@ document.getElementById('url-form').onsubmit = async function (event) {
         .then(data => {
             if (data.url) {
                 const resultUrlHTML = `
-                    <input type="text" class="form-control" id="url-result" value="${window.location.origin + data.url}" readonly/>
+                    <input type="text" class="form-control" id="url-result" value="${window.location.host + data.url}" readonly/>
                     <button class="btn btn-secondary" onclick="copyToClipboard(this)"><i class="far fa-copy"></i></button>`
                 document.getElementById('result').innerHTML = resultUrlHTML
                 getAllUrls()
@@ -77,7 +77,7 @@ function showTable(urls) {
         table += `
         <tr>
             <td>${i + 1}</td>
-            <td><input type="text" class="form-control"  id="url-result-${urls[i]._id}" value="${window.location.origin + "/t/" + urls[i].fromUrl}" readonly/></td>
+            <td><input type="text" class="form-control"  id="url-result-${urls[i]._id}" value="${window.location.host + "/t/" + urls[i].fromUrl}" readonly/></td>
             <td>
                 <a href="${urls[i].toUrl}" target="_blank">
                     <button class="btn-sm btn-warning">

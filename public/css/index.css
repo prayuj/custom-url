@@ -1,0 +1,7 @@
+#url-form {
+    margin: .5em;
+}
+
+#url-form>input, #result>* {
+    margin: .5em 0;
+}
