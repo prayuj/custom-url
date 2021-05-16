@@ -33,6 +33,17 @@ app.get('/all-urls', async (req, res) => {
     }
 })
 
+app.delete('/url', async (req, res) => {
+    try {
+        const _id = req.params.id
+        const url = await Task.findOneAndDelete({ _id })
+        if (!url) return res.status(404).send()
+        res.status(200).send(url)
+    } catch (error) {
+        res.send({ error })
+    }
+})
+
 app.post('/shorten-url', async (req, res) => {
     try {
         let fromUrl = urlSlug(req.body.title);
