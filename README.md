@@ -4,7 +4,7 @@
 <p>You can set 'uniquenames' names collections with a POST request to end point '/set-url-names'. 
 An example of the request body is provided in <a href="https://github.com/prayuj/custom-url/blob/main/misc/short-url-names.json">./misc/short-url-names.json</a></p>
 
-<p>The following endpoints have authentication middleware:</p>
+<p>The List of endpoints are as follows:</p>
 <table>
   <thead>
     <th>Endpoint</th>
