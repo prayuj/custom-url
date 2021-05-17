@@ -24,7 +24,7 @@ app.get('/t/:url', async (req, res) => {
         url.save();
         res.redirect(url.toUrl)
     } catch (err) {
-        res.redirect('/')
+        res.redirect('/404?target=' + req.params.url)
     }
 })
 
@@ -102,9 +102,11 @@ app.post('/set-url-name', auth, async (req, res) => {
 
 
 const privateDirectoryPath = path.join(__dirname, '../private')
-const publicDirectoryPath = path.join(__dirname, '../public')
+const loginDirectoryPath = path.join(__dirname, '../login')
+const notFoundDirectoryPath = path.join(__dirname, '../404')
 
-app.use('/enter-key', express.static(publicDirectoryPath))
+app.use('/404', express.static(notFoundDirectoryPath))
+app.use('/enter-key', express.static(loginDirectoryPath))
 app.use('/', auth, express.static(privateDirectoryPath))
 
 app.listen(port, () => {
