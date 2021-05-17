@@ -13,7 +13,7 @@ document.getElementById('url-form').onsubmit = async function (event) {
                 this.reset()
                 const resultUrlHTML = `
                     <p>${window.location.host + data.url}</p>
-                    <button class="btn btn-secondary" onclick="copyToClipboard('${window.location.host + data.url}')"><i class="far fa-copy"></i></button>`
+                    <button class="btn btn-secondary" onclick="copyToClipboard('${window.location.origin + data.url}')"><i class="far fa-copy"></i></button>`
                 document.getElementById('result').innerHTML = resultUrlHTML
                 getAllUrls()
             } else {
@@ -78,7 +78,7 @@ function showTable(urls) {
                 <p>${urls[i].fromUrl}</p>
             </td>
             <td>
-                <button id = "copy-${urls[i]._id}" class="btn-sm btn-secondary" onclick="copyToClipboard('${window.location.host + "/t/" + urls[i].fromUrl}')"><i class="far fa-copy"></i></button>
+                <button id = "copy-${urls[i]._id}" class="btn-sm btn-secondary" onclick="copyToClipboard('${window.location.origin + "/t/" + urls[i].fromUrl}')"><i class="far fa-copy"></i></button>
             </td>
             <td>
                 ${urls[i].count || 'No Data'}
