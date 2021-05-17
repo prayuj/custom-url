@@ -19,10 +19,10 @@ app.use(cookieParser())
 app.get('/t/:url', async (req, res) => {
     try {
         const url = await shortUrl.findOne({ fromUrl: req.params.url })
+        res.redirect(url.toUrl)
         if (url.count) url.count += 1
         else url.count = 1;
         url.save();
-        res.redirect(url.toUrl)
     } catch (err) {
         res.redirect('/404?target=' + req.params.url)
     }
