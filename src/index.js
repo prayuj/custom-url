@@ -85,7 +85,7 @@ app.post('/shorten-url', auth, async (req, res) => {
     }
 })
 
-app.post('/set-url-name', auth, async (req, res) => {
+app.post('/set-url-names', auth, async (req, res) => {
     try {
         const names = req.body.names
         for (let index = 0; index < names.length; index++) {
