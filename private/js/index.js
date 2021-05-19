@@ -81,7 +81,7 @@ function showTable(urls) {
                 <button id = "copy-${urls[i]._id}" class="btn-sm btn-secondary" onclick="copyToClipboard('${window.location.origin + "/t/" + urls[i].fromUrl}')"><i class="far fa-copy"></i></button>
             </td>
             <td>
-                ${urls[i].count || 'No Data'}
+                ${urls[i].count >= 0 ? urls[i].count : 'No Data'}
             </td>
             <td>
                 <a href="${urls[i].toUrl}" target="_blank">
