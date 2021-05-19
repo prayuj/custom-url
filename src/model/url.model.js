@@ -6,7 +6,6 @@ const urlShortnerSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        lowercase: true,
         validate(value) {
             if (!validator.isURL(value, { require_host: false })) {
                 throw new Error('To URL is not valid')
