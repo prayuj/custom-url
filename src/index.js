@@ -56,29 +56,38 @@ app.delete('/url', auth, async (req, res) => {
 
 app.post('/shorten-url', auth, async (req, res) => {
     try {
+        let fromUrl, toUrl, url;
         if (req.body.title) {
-            let fromUrl = urlSlug(req.body.title);
-            let toUrl = req.body.url
-            let url = new shortUrl({
-                toUrl,
-                fromUrl,
-                setFromUniqueNames: false
-            })
-            await url.save()
-            res.status(200).send({ url: '/t/' + fromUrl })
+            fromUrl = urlSlug(req.body.title);
+            toUrl = req.body.url
+            let tempFromUrl = await uniqueName.findOneAndDelete({ name: fromUrl })
+            if (tempFromUrl) {
+                fromUrl = tempFromUrl.name
+                url = new shortUrl({
+                    toUrl,
+                    fromUrl,
+                    setFromUniqueNames: true
+                })
+            } else {
+                url = new shortUrl({
+                    toUrl,
+                    fromUrl,
+                    setFromUniqueNames: false
+                })
+            }
         } else {
-            let fromUrl = await uniqueName.findOneAndDelete();
+            fromUrl = await uniqueName.findOneAndDelete();
             fromUrl = urlSlug(fromUrl.name)
-            let toUrl = req.body.url
-            let url = new shortUrl({
+            toUrl = req.body.url
+            url = new shortUrl({
                 toUrl,
                 fromUrl,
                 setFromUniqueNames: true
             })
-            await url.save()
-            res.status(200).send({ url: '/t/' + fromUrl })
         }
 
+        await url.save()
+        res.status(200).send({ url: '/t/' + fromUrl })
     } catch (error) {
         if (error.message)
             res.status(500).send({ error: error.message })
