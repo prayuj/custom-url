@@ -6,6 +6,7 @@ const morgan = require('morgan')
 const urlSlug = require('url-slug')
 const shortUrl = require('./model/url.model')
 const uniqueName = require('./model/uniqueName.model')
+const log = require('./model/log.model')
 const auth = require('./middleware/auth')
 const logger = require('./middleware/logger')
 const constData = require('./const')
@@ -22,10 +23,12 @@ app.use(cookieParser())
 
 const privateDirectoryPath = path.join(__dirname, '../private')
 const loginDirectoryPath = path.join(__dirname, '../login')
+const logDirectoryPath = path.join(__dirname, '../logs')
 const notFoundDirectoryPath = path.join(__dirname, '../404')
 
 app.use('/404', express.static(notFoundDirectoryPath))
 app.use('/enter-key', express.static(loginDirectoryPath))
+app.use('/logs', auth, express.static(logDirectoryPath))
 app.use('/', auth, express.static(privateDirectoryPath))
 
 app.use(morgan(constData.tokenFormat, {
@@ -121,6 +124,24 @@ app.post('/set-url-names', auth, async (req, res) => {
             await name.save()
         }
         res.status(200).send({ success: 'Successfully Set New Unique Names' })
+    } catch (error) {
+        res.status(500).send({ error })
+    }
+})
+
+app.get('/all-logs', auth, async (req, res) => {
+    try {
+        const sort = {}
+        if (req.query.sortBy) {
+            const parts = req.query.sortBy.split(':')
+            sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
+        }
+        const logsArray = await log.find({}, null, {
+            limit: parseInt(req.query.limit),
+            skip: parseInt(req.query.skip),
+            sort
+        }).exec()
+        res.status(200).send({ logs: logsArray })
     } catch (error) {
         res.status(500).send({ error })
     }
