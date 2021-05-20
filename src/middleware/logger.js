@@ -3,11 +3,10 @@ const log = require('../model/log.model')
 
 const logger = split().on('data', (line) => {
     try {
-        // const newLog = new log({
-        //     line
-        // })
-        // newLog.save()
-        console.log(line)
+        const newLog = new log({
+            line
+        })
+        newLog.save()
     } catch (error) {
         console.log('Could Not Log Request ', error)
     }
