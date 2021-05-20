@@ -20,17 +20,6 @@ app.use(cors());
 app.use(express.json())
 app.use(cookieParser())
 
-
-const privateDirectoryPath = path.join(__dirname, '../private')
-const loginDirectoryPath = path.join(__dirname, '../login')
-const logDirectoryPath = path.join(__dirname, '../logs')
-const notFoundDirectoryPath = path.join(__dirname, '../404')
-
-app.use('/404', express.static(notFoundDirectoryPath))
-app.use('/enter-key', express.static(loginDirectoryPath))
-app.use('/logs', auth, express.static(logDirectoryPath))
-app.use('/', auth, express.static(privateDirectoryPath))
-
 app.use(morgan(constData.tokenFormat, {
     stream: logger,
     skip: (req, res) => !(req.params && req.params.url)
@@ -146,6 +135,16 @@ app.get('/all-logs', auth, async (req, res) => {
         res.status(500).send({ error })
     }
 })
+
+const privateDirectoryPath = path.join(__dirname, '../private')
+const loginDirectoryPath = path.join(__dirname, '../login')
+const logDirectoryPath = path.join(__dirname, '../logs')
+const notFoundDirectoryPath = path.join(__dirname, '../404')
+
+app.use('/404', express.static(notFoundDirectoryPath))
+app.use('/enter-key', express.static(loginDirectoryPath))
+app.use('/logs', auth, express.static(logDirectoryPath))
+app.use('/', auth, express.static(privateDirectoryPath))
 
 app.listen(port, () => {
     console.log('Server is running on port ' + port)
