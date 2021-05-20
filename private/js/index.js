@@ -24,8 +24,7 @@ document.getElementById('url-form').onsubmit = async function (event) {
 }
 
 function getAllUrls() {
-    fetch('/all-urls')
-        .then(response => response.json())
+    restClient('/all-urls', null, 'GET')
         .then(data => showTable(data.urls))
 }
 
@@ -105,7 +104,6 @@ function showTable(urls) {
 
 }
 
-// Example POST method implementation:
 async function restClient(url = '', data = {}, method = 'POST') {
     // Default options are marked with *
     const response = await fetch(url, {
@@ -119,7 +117,7 @@ async function restClient(url = '', data = {}, method = 'POST') {
         },
         redirect: 'follow', // manual, *follow, error
         referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-        body: JSON.stringify(data) // body data type must match "Content-Type" header
+        body: method === 'GET' ? null : JSON.stringify(data) // body data type must match "Content-Type" header
     });
     return response.json(); // parses JSON response into native JavaScript objects
 }
