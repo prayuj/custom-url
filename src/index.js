@@ -2,10 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path')
 const cookieParser = require('cookie-parser')
+const morgan = require('morgan')
+const urlSlug = require('url-slug')
 const shortUrl = require('./model/url.model')
 const uniqueName = require('./model/uniqueName.model')
 const auth = require('./middleware/auth')
-const urlSlug = require('url-slug')
+const logger = require('./middleware/logger')
+const constData = require('./const')
 const port = process.env.PORT || 3001;
 
 require('./db/mongoose')
@@ -15,6 +18,20 @@ const app = express();
 app.use(cors());
 app.use(express.json())
 app.use(cookieParser())
+
+
+const privateDirectoryPath = path.join(__dirname, '../private')
+const loginDirectoryPath = path.join(__dirname, '../login')
+const notFoundDirectoryPath = path.join(__dirname, '../404')
+
+app.use('/404', express.static(notFoundDirectoryPath))
+app.use('/enter-key', express.static(loginDirectoryPath))
+app.use('/', auth, express.static(privateDirectoryPath))
+
+app.use(morgan(constData.tokenFormat, {
+    stream: logger,
+    skip: (req, res) => !(req.params && req.params.url)
+}))
 
 app.get('/t/:url', async (req, res) => {
     try {
@@ -108,15 +125,6 @@ app.post('/set-url-names', auth, async (req, res) => {
         res.status(500).send({ error })
     }
 })
-
-
-const privateDirectoryPath = path.join(__dirname, '../private')
-const loginDirectoryPath = path.join(__dirname, '../login')
-const notFoundDirectoryPath = path.join(__dirname, '../404')
-
-app.use('/404', express.static(notFoundDirectoryPath))
-app.use('/enter-key', express.static(loginDirectoryPath))
-app.use('/', auth, express.static(privateDirectoryPath))
 
 app.listen(port, () => {
     console.log('Server is running on port ' + port)
