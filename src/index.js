@@ -28,12 +28,12 @@ app.use(morgan(constData.tokenFormat, {
 app.get('/t/:url', async (req, res) => {
     try {
         const url = await shortUrl.findOne({ fromUrl: req.params.url })
-        res.redirect(url.toUrl)
+        res.status(200).send({url:url.toUrl})
         if (url.count) url.count += 1
         else url.count = 1;
         url.save();
     } catch (err) {
-        res.redirect('/404?target=' + req.params.url)
+        res.status(404).send({ err })
     }
 })
 
@@ -139,9 +139,7 @@ app.get('/all-logs', auth, async (req, res) => {
 const privateDirectoryPath = path.join(__dirname, '../private')
 const loginDirectoryPath = path.join(__dirname, '../login')
 const logDirectoryPath = path.join(__dirname, '../logs')
-const notFoundDirectoryPath = path.join(__dirname, '../404')
 
-app.use('/404', express.static(notFoundDirectoryPath))
 app.use('/enter-key', express.static(loginDirectoryPath))
 app.use('/logs', auth, express.static(logDirectoryPath))
 app.use('/', auth, express.static(privateDirectoryPath))
