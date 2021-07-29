@@ -96,7 +96,7 @@ app.post('/shorten-url', auth, async (req, res) => {
         }
 
         await url.save()
-        res.status(200).send({ url: '/t/' + fromUrl })
+        res.status(200).send({ url: fromUrl })
     } catch (error) {
         if (error.message)
             res.status(500).send({ error: error.message })

@@ -13,7 +13,7 @@ document.getElementById('url-form').onsubmit = async function (event) {
                 this.reset()
                 const resultUrlHTML = `
                     <p>${window.location.host + data.url}</p>
-                    <button class="btn btn-secondary" onclick="copyToClipboard('${window.location.origin + data.url}')"><i class="far fa-copy"></i></button>`
+                    <button class="btn btn-secondary" onclick="copyToClipboard('${window.location.origin + "/t/" + data.url}')"><i class="far fa-copy"></i></button>`
                 document.getElementById('result').innerHTML = resultUrlHTML
                 getAllUrls()
             } else {
