@@ -7,8 +7,10 @@ const urlSlug = require('url-slug')
 const shortUrl = require('./model/url.model')
 const uniqueName = require('./model/uniqueName.model')
 const log = require('./model/log.model')
+const userAccessInfo = require('./model/userAccessInfo.model')
 const auth = require('./middleware/auth')
 const logger = require('./middleware/logger')
+const logUserAccessInfo = require('./middleware/userAccess')
 const constData = require('./const')
 const port = process.env.PORT || 3001;
 
@@ -16,7 +18,10 @@ require('./db/mongoose')
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    credentials: true,
+    origin: true
+}));
 app.use(express.json())
 app.use(cookieParser())
 
@@ -32,6 +37,7 @@ app.get('/t/:url', async (req, res) => {
         if (url.count) url.count += 1
         else url.count = 1;
         url.save();
+        if (req.query && req.query.additional) logUserAccessInfo(req.query.additional, req.params.url, url.toUrl);
     } catch (err) {
         res.status(404).send({ err })
     }
@@ -113,6 +119,24 @@ app.post('/set-url-names', auth, async (req, res) => {
             await name.save()
         }
         res.status(200).send({ success: 'Successfully Set New Unique Names' })
+    } catch (error) {
+        res.status(500).send({ error })
+    }
+})
+
+app.get('/user-access-logs', auth, async (req, res) => {
+    try {
+        const sort = {}
+        if (req.query.sortBy) {
+            const parts = req.query.sortBy.split(':')
+            sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
+        }
+        const userAccessArray = await userAccessInfo.find({}, null, {
+            limit: parseInt(req.query.limit),
+            skip: parseInt(req.query.skip),
+            sort
+        }).exec()
+        res.status(200).send({ logs: userAccessArray })
     } catch (error) {
         res.status(500).send({ error })
     }
