@@ -33,13 +33,14 @@ app.use(morgan(constData.tokenFormat, {
 app.get('/t/:url', async (req, res) => {
     try {
         const url = await shortUrl.findOne({ fromUrl: req.params.url })
+        if (url === null) res.status(404).send({ error: 'Could not find resource' })
         res.status(200).send({url:url.toUrl})
         if (url.count) url.count += 1
         else url.count = 1;
         url.save();
         if (req.query && req.query.additional) logUserAccessInfo(req.query.additional, req.params.url, url.toUrl);
     } catch (err) {
-        res.status(404).send({ err })
+        res.status(404).send({ error: err.message });
     }
 })
 
