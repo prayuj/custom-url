@@ -54,6 +54,7 @@ app.post('/log/:url', async (req, res) => {
             }
             return res.status(200).send({ message: 'Logged' });
         }
+        res.status(400).send({ message: 'Invalid Request' });
     } catch (err) {
         res.status(404).send({ error: err.message });
     }
