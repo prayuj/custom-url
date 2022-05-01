@@ -11,7 +11,6 @@ const userAccessInfo = require('./model/userAccessInfo.model')
 const auth = require('./middleware/auth')
 const logger = require('./middleware/logger')
 const logUserAccessInfo = require('./middleware/userAccess')
-const constData = require('./const')
 const port = process.env.PORT || 3001;
 
 require('./db/mongoose')
@@ -24,11 +23,6 @@ app.use(cors({
 }));
 app.use(express.json())
 app.use(cookieParser())
-
-app.use(morgan(constData.tokenFormat, {
-    stream: logger,
-    skip: (req, res) => !(req.params && req.params.url)
-}))
 
 app.get('/t/:url', async (req, res) => {
     try {
@@ -154,24 +148,6 @@ app.get('/user-access-logs', auth, async (req, res) => {
             sort
         }).exec()
         res.status(200).send({ logs: userAccessArray })
-    } catch (error) {
-        res.status(500).send({ error })
-    }
-})
-
-app.get('/all-logs', auth, async (req, res) => {
-    try {
-        const sort = {}
-        if (req.query.sortBy) {
-            const parts = req.query.sortBy.split(':')
-            sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
-        }
-        const logsArray = await log.find({}, null, {
-            limit: parseInt(req.query.limit),
-            skip: parseInt(req.query.skip),
-            sort
-        }).exec()
-        res.status(200).send({ logs: logsArray })
     } catch (error) {
         res.status(500).send({ error })
     }
