@@ -2,14 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path')
 const cookieParser = require('cookie-parser')
-const morgan = require('morgan')
 const urlSlug = require('url-slug')
 const shortUrl = require('./model/url.model')
 const uniqueName = require('./model/uniqueName.model')
-const log = require('./model/log.model')
 const userAccessInfo = require('./model/userAccessInfo.model')
 const auth = require('./middleware/auth')
-const logger = require('./middleware/logger')
 const logUserAccessInfo = require('./middleware/userAccess')
 const port = process.env.PORT || 3001;
 
